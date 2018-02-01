@@ -347,6 +347,12 @@ var tabContextMenu = {
       case 'context_closeTab':
         browser.tabs.remove(this.contextTab.id);
         break;
+      case 'context_createGroup':
+        browser.tabs.create({
+          url: kGROUP_TAB_URI,
+          active: true
+        });
+        break;
 
       default: {
         let id = aItem.getAttribute('data-item-id');
