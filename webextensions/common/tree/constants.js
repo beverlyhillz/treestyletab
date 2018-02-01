@@ -50,6 +50,8 @@ const kCOMMAND_BLOCK_USER_OPERATIONS   = 'treestyletab:block-user-operations';
 const kCOMMAND_UNBLOCK_USER_OPERATIONS = 'treestyletab:unblock-user-operations';
 const kCOMMAND_BROADCAST_TAB_STATE     = 'treestyletab:broadcast-tab-state';
 
+const kCOMMAND_SET_COLOR     = 'treestyletab:set-color';
+
 const kNOTIFY_TAB_MOUSEDOWN  = 'treestyletab:tab-mousedown';
 
 const kTSTAPI_REGISTER_SELF         = 'register-self';
@@ -113,6 +115,7 @@ const kPERSISTENT_INSERT_BEFORE = 'insert-before';
 const kPERSISTENT_INSERT_AFTER  = 'isnert-after';
 const kPERSISTENT_SUBTREE_COLLAPSED = 'subtree-collapsed';
 const kPERSISTENT_SPECIAL_TAB_STATES = 'special-tab-states';
+const kPERSISTENT_COLOR         = 'color';
 
 const kFAVICON         = 'favicon';
 const kFAVICON_IMAGE   = 'favicon-image';

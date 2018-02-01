@@ -163,6 +163,16 @@ function buildTab(aApiTab, aOptions = {}) {
   tab.childTabs = [];
   tab.parentTab = null;
 
+
+  const tabId = aApiTab.id || 0;
+  browser.sessions.getTabValue(aApiTab.id, kPERSISTENT_COLOR).then((color) => {
+    if (color === undefined) {
+      color = (tabId * 15) % 360;
+    }
+    setTabColor(tabId, color);
+
+  }, (e) => console.error(e));
+
   return tab;
 }
 
@@ -1024,6 +1034,117 @@ async function removeSpecialTabState(aTab, aState) {
   states.splice(index, 1);
   await browser.sessions.setTabValue(aTab.apiTab.id, kPERSISTENT_SPECIAL_TAB_STATES, states);
   return states;
+}
+
+
+/* Tab Color Stuff */
+
+// https://stackoverflow.com/questions/6122571/simple-non-secure-hash-function-for-javascript
+function hashString(s) {
+  let hash = 0;
+  if (s.length === 0) {
+    return hash;
+  }
+  for (let letter of s) {
+    const char = letter.charCodeAt(0);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash;
+}
+
+// https://gist.github.com/mjackson/5311256
+function rgbToHsl(r, g, b) {
+  r /= 255, g /= 255, b /= 255;
+
+  let max = Math.max(r, g, b), min = Math.min(r, g, b);
+  let h, s, l = (max + min) / 2;
+
+  if (max === min) {
+    h = s = 0; // achromatic
+  } else {
+    let d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+    switch (max) {
+      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+      case g: h = (b - r) / d + 2; break;
+      case b: h = (r - g) / d + 4; break;
+    }
+
+    h /= 6;
+  }
+
+  return { h, s, l };
+}
+
+// https://stackoverflow.com/a/5624139
+function hexToRgb(hex) {
+  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result ? {
+    r: parseInt(result[1], 16),
+    g: parseInt(result[2], 16),
+    b: parseInt(result[3], 16)
+  } : null;
+}
+
+
+function setTabColor(tabId, color) {
+  tabId = parseInt(tabId);
+  if (window.location.href.match(/background\.html/)) {
+    browser.runtime.sendMessage({
+      type: kCOMMAND_SET_COLOR,
+      tab: tabId,
+      color: color
+    })
+  } else if (window.location.href.match(/sidebar\.html/)) {
+    let cssColorFrom;
+    let cssColorTo;
+
+    if (typeof color === 'number') {
+      cssColorFrom = `hsl(${color}, 50%, 75%)`;
+      cssColorTo = `hsl(${color}, 50%, 50%)`;
+
+    } else {
+      const {r, g, b} = hexToRgb(color);
+      let {h, s, l} = rgbToHsl(r, g, b);
+      const newL = Math.min((l * 100) + 25, 75);
+      s = 0.5;
+
+      cssColorTo = color;
+      cssColorFrom = `hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${newL}%)`;
+    }
+
+    getTabById(tabId).style.background = `linear-gradient(to left, ${cssColorFrom} 0%, ${cssColorTo}  100%)`;
+    browser.sessions.setTabValue(tabId, kPERSISTENT_COLOR, color);
+  }
+}
+
+
+async function recolorTabs(tabs) {
+  let i = 0;
+  const scatter = 20;
+
+  for (let $tab of tabs) {
+    const url = new URL($tab.dataset.currentUri);
+    const hostname = url.host ? url.host : url.href;
+    const hash = Math.abs(hashString(hostname));
+    const color = Math.abs(Math.round((hash % 360) + ((Math.random() * scatter) - (scatter / 2))));
+
+    const tabId = $tab.getAttribute(kAPI_TAB_ID);
+    setTabColor(tabId, color);
+    i++;
+  }
+}
+
+async function recolorTabsRainbow(tabs) {
+  let i = 0;
+
+  for (let $tab of tabs) {
+    const tabId = $tab.getAttribute(kAPI_TAB_ID);
+    setTabColor(tabId, (i * 15) % 360);
+    i++;
+  }
 }
 
 

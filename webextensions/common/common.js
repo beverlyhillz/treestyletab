@@ -139,6 +139,9 @@ configs = new Configs({
   context_collapseAll: true,
   context_expandAll: true,
   context_bookmarkTree: true,
+  context_setTabColor: true,
+  context_recolorAllTabs: true,
+  context_recolorAllTabsRainbow: true,
 
 
   // tree behavior

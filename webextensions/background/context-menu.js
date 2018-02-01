@@ -16,6 +16,10 @@ var gContextMenuItems = `
   collapseAll
   expandAll
   -----------------
+  setTabColor
+  recolorAllTabs
+  recolorAllTabsRainbow
+  -----------------
   bookmarkTree
 `.trim().split(/\s+/);
 
@@ -93,6 +97,27 @@ var contextMenuClickListener = (aInfo, aAPITab) => {
     case 'bookmarkTree':
       Commands.bookmarkTree(contextTab);
       break;
+
+    case 'setTabColor': {
+      const tabId = contextTab.getAttribute(kAPI_TAB_ID);
+      (async () => {
+        const newApiTab = await browser.tabs.create({
+          url: browser.extension.getURL(`resources/set-tab-color.html?tab=${tabId}`),
+          active: true
+        });
+        await browser.tabs.executeScript(newApiTab.id, {file: '/common/tree/constants.js'});
+        await browser.tabs.executeScript(newApiTab.id, {file: '/resources/set-tab-color.js'});
+      })()
+
+    }; break;
+
+    case 'recolorAllTabs': {
+      recolorTabs(getNormalTabs(container));
+    }; break;
+
+    case 'recolorAllTabsRainbow': {
+      recolorTabsRainbow(getNormalTabs(container));
+    }
 
     default:
       break;

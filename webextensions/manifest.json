@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
-  "name": "__MSG_extensionName__",
-  "version": "2.4.15",
+  "name": "__MSG_extensionName__ Rainbow Tabs",
+  "version": "2.4.15m1",
   "author": "YUKI \"Piro\" Hiroshi",
   "description": "__MSG_extensionDescription__",
   "permissions": [
@@ -174,7 +174,7 @@
   "default_locale": "en",
   "applications": {
     "gecko": {
-      "id": "treestyletab@piro.sakura.ne.jp",
+      "id": "treestyletab@mz0r",
       "strict_min_version": "57.0"
     }
   }

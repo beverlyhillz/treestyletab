@@ -1195,7 +1195,6 @@ function onMessage(aMessage, aSender, aRespond) {
       typeof aMessage.type != 'string' ||
       aMessage.type.indexOf('treestyletab:') != 0)
     return;
-
   //log('onMessage: ', aMessage, aSender);
   switch (aMessage.type) {
     case kCOMMAND_PING_TO_SIDEBAR: {
@@ -1431,6 +1430,10 @@ function onMessage(aMessage, aSender, aRespond) {
           break;
       }
       break;
+
+    case kCOMMAND_SET_COLOR: {
+      setTabColor(aMessage.tab, aMessage.color);
+    }; break;
   }
 }
 
