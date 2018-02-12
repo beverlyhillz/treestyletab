@@ -336,5 +336,9 @@
   "tabContextMenu_closeOther_label":  { "message": "Cl&ose Other Tabs" },
 
   "tabContextMenu_undoClose_label":   { "message": "&Undo Close Tab" },
-  "tabContextMenu_close_label":       { "message": "&Close Tab" }
+  "tabContextMenu_close_label":       { "message": "&Close Tab" },
+
+  "context_setTabColor_label": { "message": "Set tab color" },
+  "context_recolorAllTabs_label": { "message": "Recolorize tree (hostnames)" },
+  "context_recolorAllTabsRainbow_label": { "message": "Recolorize tree (rainbow)" }
 }
