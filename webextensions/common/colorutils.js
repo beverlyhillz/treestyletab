@@ -32,11 +32,20 @@ function rebuildColorCache() {
 
   const hosts = configs.hostnameColors
     .split('\n')
+    .filter((line) => !line.startsWith('//'))
     .map((line) => line.split(';').map((item => item.trim())));
 
   for (let [color, hostname] of hosts) {
+    if (color === undefined || hostname === undefined) {
+      continue;
+    }
+
     if (!color.startsWith('#')) {
       color = Number.parseInt(color);
+
+      if (Number.isNaN(color)) {
+        continue;
+      }
     }
     colorCache.set(hostname, color);
   }
