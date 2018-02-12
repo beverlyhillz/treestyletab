@@ -18,7 +18,7 @@ function getHostname(url) {
       return parts[0];
     }
     else {
-      return parts.slice(-2).join(".");
+      return parts.slice(-2).join('.');
     }
   }
   else {
