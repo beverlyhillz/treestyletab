@@ -330,10 +330,21 @@
             </label>
         </p>
 
+        <p>
+            Example content for hostname colors. A color for a hostname can be either a
+            <a href="https://en.wikipedia.org/wiki/Hue">hue</a> with a number from 0-360
+            or a #rrggbb color value. Lines which start with // will be ignored.
+        </p>
         <pre>
-            hue; www.example.com
-            hue; .example.com
-            #rrggbb; www.example.com
+            // Comments
+            hue; example.com
+            #rrggbb; example.com
+
+            // Example:
+            // This would colorize google.de tabs in a blue color and mozilla.org tabs with bright red
+
+            150; google.de
+            #ff0000; mozilla.org
         </pre>
         <textarea id="hostnameColors"
                   rows="3"
