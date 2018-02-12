@@ -1039,56 +1039,6 @@ async function removeSpecialTabState(aTab, aState) {
 
 /* Tab Color Stuff */
 
-// https://stackoverflow.com/questions/6122571/simple-non-secure-hash-function-for-javascript
-function hashString(s) {
-  let hash = 0;
-  if (s.length === 0) {
-    return hash;
-  }
-  for (let letter of s) {
-    const char = letter.charCodeAt(0);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  return hash;
-}
-
-// https://gist.github.com/mjackson/5311256
-function rgbToHsl(r, g, b) {
-  r /= 255, g /= 255, b /= 255;
-
-  let max = Math.max(r, g, b), min = Math.min(r, g, b);
-  let h, s, l = (max + min) / 2;
-
-  if (max === min) {
-    h = s = 0; // achromatic
-  } else {
-    let d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-
-    switch (max) {
-      case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-      case g: h = (b - r) / d + 2; break;
-      case b: h = (r - g) / d + 4; break;
-    }
-
-    h /= 6;
-  }
-
-  return { h, s, l };
-}
-
-// https://stackoverflow.com/a/5624139
-function hexToRgb(hex) {
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16)
-  } : null;
-}
-
-
 function setTabColor(tabId, color) {
   tabId = parseInt(tabId);
   if (window.location.href.match(/background\.html/)) {
