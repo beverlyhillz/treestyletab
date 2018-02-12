@@ -271,7 +271,12 @@ configs = new Configs({
   importedConfigsFromLegacy: null,
   legacyConfigsNextMigrationVersion: 0,
   importedTreeStructureFromLegacy: null,
-  migrateLegacyTreeStructure: true
+  migrateLegacyTreeStructure: true,
+
+  // hostname colors
+  hostnameColors: '',
+  hostnameColorsEnabled: false,
+  hostnameColorsOnly: false,
 }, {
   syncKeys: `
     counterRole

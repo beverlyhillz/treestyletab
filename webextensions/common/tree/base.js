@@ -163,15 +163,16 @@ function buildTab(aApiTab, aOptions = {}) {
   tab.childTabs = [];
   tab.parentTab = null;
 
+  if (!(configs.hostnameColorsEnabled && configs.hostnameColorsOnly)) {
+    const tabId = aApiTab.id || 0;
+    browser.sessions.getTabValue(aApiTab.id, kPERSISTENT_COLOR).then((color) => {
+      if (color === undefined) {
+        color = (tabId * 15) % 360;
+      }
+      setTabColor(tabId, color);
 
-  const tabId = aApiTab.id || 0;
-  browser.sessions.getTabValue(aApiTab.id, kPERSISTENT_COLOR).then((color) => {
-    if (color === undefined) {
-      color = (tabId * 15) % 360;
-    }
-    setTabColor(tabId, color);
-
-  }, (e) => console.error(e));
+    }, (e) => console.error(e));
+  }
 
   return tab;
 }
@@ -191,6 +192,16 @@ function updateUniqueId(aTab) {
 
 function updateTab(aTab, aNewState = {}, aOptions = {}) {
   if ('url' in aNewState) {
+    if (configs.hostnameColorsEnabled) {
+      const tabColor = getHostnameColor(getHostname(aNewState.url));
+      if (tabColor !== null) {
+        const tabId = Number.parseInt(aTab.dataset.tabId);
+        if (getTabById(tabId) !== null) {
+          setTabColor(tabId, tabColor);
+        }
+      }
+    }
+
     aTab.setAttribute(kCURRENT_URI, aNewState.url);
     if (aTab.dataset.discardURLAfterCompletelyLoaded &&
         aTab.dataset.discardURLAfterCompletelyLoaded != aNewState.url)
@@ -1064,7 +1075,6 @@ function setTabColor(tabId, color) {
       cssColorTo = color;
       cssColorFrom = `hsl(${Math.round(h * 360)}, ${Math.round(s * 100)}%, ${newL}%)`;
     }
-
     getTabById(tabId).style.background = `linear-gradient(to left, ${cssColorFrom} 0%, ${cssColorTo}  100%)`;
     browser.sessions.setTabValue(tabId, kPERSISTENT_COLOR, color);
   }

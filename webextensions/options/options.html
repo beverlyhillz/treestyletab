@@ -312,6 +312,35 @@
     <h1>__MSG_config_shortcuts_caption__</h1>
     <div id="shortcuts"></div>
 
+    <h1>Colors / Hostnames</h1>
+    <fieldset>
+        <legend>Assign colors to tabs with hostnames</legend>
+
+        <p>
+            <label>
+                <input id="hostnameColorsEnabled" type="checkbox">
+                Enable hostname colors
+            </label>
+        </p>
+
+        <p>
+            <label>
+                <input id="hostnameColorsOnly" type="checkbox">
+                Only colorize tabs associated with hostnames
+            </label>
+        </p>
+
+        <pre>
+            hue; www.example.com
+            hue; .example.com
+            #rrggbb; www.example.com
+        </pre>
+        <textarea id="hostnameColors"
+                  rows="3"
+                  style="width: 100%"
+                  placeholder="..."></textarea>
+    </fieldset>
+
 
     <h1>__MSG_config_advanced_caption__</h1>
     <fieldset>
