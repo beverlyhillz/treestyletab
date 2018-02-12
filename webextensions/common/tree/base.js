@@ -1063,8 +1063,8 @@ function setTabColor(tabId, color) {
     let cssColorTo;
 
     if (typeof color === 'number') {
-      cssColorFrom = `hsl(${color}, 50%, 75%)`;
-      cssColorTo = `hsl(${color}, 50%, 50%)`;
+      cssColorFrom = `hsl(${color}, ${configs.rainbowTabsToSaturation}%, ${configs.rainbowTabsToLightness}%)`;
+      cssColorTo = `hsl(${color}, ${configs.rainbowTabsFromSaturation}%, ${configs.rainbowTabsFromLightness}%)`;
 
     } else {
       const {r, g, b} = hexToRgb(color);

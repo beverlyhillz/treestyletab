@@ -273,6 +273,13 @@ configs = new Configs({
   importedTreeStructureFromLegacy: null,
   migrateLegacyTreeStructure: true,
 
+  // rainbowtabs settings
+
+  rainbowTabsFromSaturation: 50,
+  rainbowTabsFromLightness: 50,
+  rainbowTabsToSaturation: 50,
+  rainbowTabsToLightness: 75,
+
   // hostname colors
   hostnameColors: '',
   hostnameColorsEnabled: false,
