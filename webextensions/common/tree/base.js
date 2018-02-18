@@ -162,6 +162,7 @@ function buildTab(aApiTab, aOptions = {}) {
 
   tab.childTabs = [];
   tab.parentTab = null;
+  tab.ancestorTabs = [];
 
   if (!(configs.hostnameColorsEnabled && configs.hostnameColorsOnly)) {
     const tabId = aApiTab.id || 0;
@@ -279,7 +280,7 @@ function updateTab(aTab, aNewState = {}, aOptions = {}) {
     window.onTabFaviconUpdated &&
       onTabFaviconUpdated(
         aTab,
-        aNewState.favIconUrl || aNewState.url
+        getSafeFaviconUrl(aNewState.favIconUrl || aNewState.url)
       );
   }
 
@@ -419,6 +420,20 @@ function updateTab(aTab, aNewState = {}, aOptions = {}) {
   }
 
   updateTabDebugTooltip(aTab);
+}
+
+function getSafeFaviconUrl(aURL) {
+  switch (aURL) {
+    case 'chrome://browser/skin/settings.svg':
+      return browser.extension.getURL('resources/icons/settings.svg');
+    case 'chrome://mozapps/skin/extensions/extensionGeneric-16.svg':
+      return browser.extension.getURL('resources/icons/extensionGeneric-16.svg');
+    default:
+      if (/^chrome:\/\//.test(aURL))
+        return browser.extension.getURL('sidebar/styles/icons/globe-16.svg');
+      break;
+  }
+  return aURL;
 }
 
 function updateTabDebugTooltip(aTab) {
@@ -1112,11 +1127,13 @@ async function recolorTabsRainbow(tabs) {
 
 function serializeTabForTSTAPI(aTab) {
   const effectiveFavIcon = TabFavIconHelper.effectiveFavIcons.get(aTab.apiTab.id);
+  const children         = getChildTabs(aTab).map(serializeTabForTSTAPI);
+  const ancestorTabIds   = getAncestorTabs(aTab).map(aTab => aTab.apiTab.id);
   return Object.assign({}, aTab.apiTab, {
     states:   Array.slice(aTab.classList).filter(aState => kTAB_INTERNAL_STATES.indexOf(aState) < 0),
     indent:   parseInt(aTab.getAttribute(kLEVEL) || 0),
     effectiveFavIconUrl: effectiveFavIcon && effectiveFavIcon.favIconUrl,
-    children: getChildTabs(aTab).map(serializeTabForTSTAPI)
+    children, ancestorTabIds
   });
 }
 
