@@ -235,8 +235,10 @@ function updateTab(aTab, aNewState = {}, aOptions = {}) {
   else if (aTab.apiTab &&
            aTab.apiTab.status == 'complete' &&
            aTab.apiTab.url.indexOf(kGROUP_TAB_URI) != 0) {
-    // Detect group tab from different session - which can have different UUID for the URL.
     getSpecialTabState(aTab).then(async (aStates) => {
+      if (aTab.apiTab.url.indexOf(kGROUP_TAB_URI) == 0)
+        return;
+      // Detect group tab from different session - which can have different UUID for the URL.
       const PREFIX_REMOVER = /^moz-extension:\/\/[^\/]+/;
       const pathPart = aTab.apiTab.url.replace(PREFIX_REMOVER, '');
       if (aStates.indexOf(kTAB_STATE_GROUP_TAB) > -1 &&
@@ -878,6 +880,7 @@ async function openURIsInTabs(aURIs, aOptions = {}) {
         insertBefore:  aOptions.insertBefore && aOptions.insertBefore.id,
         insertAfter:   aOptions.insertAfter && aOptions.insertAfter.id,
         cookieStoreId: aOptions.cookieStoreId || null,
+        isOrphan:      !!aOptions.isOrphan,
         inRemote:      false
       }));
     }
@@ -886,6 +889,8 @@ async function openURIsInTabs(aURIs, aOptions = {}) {
       let startIndex = calculateNewTabIndex(aOptions);
       let container  = getTabsContainer(aOptions.windowId);
       incrementContainerCounter(container, 'toBeOpenedTabsWithPositions', aURIs.length);
+      if (aOptions.isOrphan)
+        incrementContainerCounter(container, 'toBeOpenedOrphanTabs', aURIs.length);
       await Promise.all(aURIs.map(async (aURI, aIndex) => {
         var params = {
           windowId: aOptions.windowId,
@@ -905,7 +910,8 @@ async function openURIsInTabs(aURIs, aOptions = {}) {
         if (!tab)
           throw new Error('tab is already closed');
         if (!aOptions.opener &&
-            aOptions.parent)
+            aOptions.parent &&
+            !aOptions.isOrphan)
           await attachTabTo(tab, aOptions.parent, {
             insertBefore: aOptions.insertBefore,
             insertAfter:  aOptions.insertAfter,
@@ -1143,15 +1149,20 @@ function serializeTabForTSTAPI(aTab) {
   });
 }
 
+function getListenersForTSTAPIMessageType(aType) {
+  const uniqueTargets = {};
+  for (let id of Object.keys(gExternalListenerAddons)) {
+    const addon = gExternalListenerAddons[id];
+    if (addon.listeningTypes.indexOf(aType) > -1)
+      uniqueTargets[id] = true;
+  }
+  return Object.keys(uniqueTargets).map(aId => gExternalListenerAddons[aId]);
+}
+
 async function sendTSTAPIMessage(aMessage, aOptions = {}) {
-  var addons = window.gExternalListenerAddons;
-  if (!addons)
-    addons = await browser.runtime.sendMessage({
-      type: kCOMMAND_REQUEST_REGISTERED_ADDONS
-    });
-  var uniqueTargets = {};
-  for (let id of Object.keys(addons)) {
-    uniqueTargets[id] = true;
+  const uniqueTargets = {};
+  for (let addon of getListenersForTSTAPIMessageType(aMessage.type)) {
+    uniqueTargets[addon.id] = true;
   }
   if (aOptions.targets) {
     if (!Array.isArray(aOptions.targets))

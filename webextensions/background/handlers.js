@@ -201,7 +201,7 @@ function onTabOpening(aTab, aInfo = {}) {
   );
 
   if (!opener) {
-    if (isNewTabCommandTab(aTab)) {
+    if (!aInfo.maybeOrphan && isNewTabCommandTab(aTab)) {
       let current = aInfo.activeTab || getCurrentTab(aTab);
       log('behave as a tab opened by new tab command, current = ', dumpTab(current));
       behaveAutoAttachedTab(aTab, {
@@ -243,7 +243,7 @@ function onTabOpening(aTab, aInfo = {}) {
       });
     }
   }
-  else if (configs.autoAttach) {
+  else if (!aInfo.maybeOrphan && configs.autoAttach) {
     behaveAutoAttachedTab(aTab, {
       baseTab:   opener,
       behavior:  configs.autoAttachOnOpenedWithOwner,
@@ -991,10 +991,14 @@ function onTabUpdated(aTab, aChangeInfo) {
 
   reserveToSaveTreeStructure(aTab);
   markWindowCacheDirtyFromTab(aTab, kWINDOW_STATE_CACHED_SIDEBAR_TABS_DIRTY);
+
+  const group = getGroupTabForOpener(aTab);
+  if (group)
+    reserveToUpdateRelatedGroupTabs(group);
 }
 
 function onTabLabelUpdated(aTab) {
-  reserveToUpdateParentGroupTab(aTab);
+  reserveToUpdateRelatedGroupTabs(aTab);
 }
 
 function onTabSubtreeCollapsedStateChanging(aTab) {
@@ -1118,7 +1122,7 @@ async function onTabAttached(aTab, aInfo = {}) {
     getPreviousTab(aTab)
   ]);
 
-  reserveToUpdateParentGroupTab(aTab);
+  reserveToUpdateRelatedGroupTabs(aTab);
 
   await wait(0);
   // "Restore Previous Session" closes some tabs at first and it causes tree changes, so we should not clear the old cache yet.
@@ -1140,7 +1144,7 @@ async function onTabDetached(aTab, aDetachInfo) {
   reserveToUpdateAncestors([aTab].concat(getDescendantTabs(aTab)));
   reserveToUpdateChildren(aDetachInfo.oldParentTab);
 
-  reserveToUpdateParentGroupTab(aDetachInfo.oldParentTab);
+  reserveToUpdateRelatedGroupTabs(aDetachInfo.oldParentTab);
 
   await wait(0);
   // "Restore Previous Session" closes some tabs at first and it causes tree changes, so we should not clear the old cache yet.
@@ -1262,7 +1266,12 @@ function onMessage(aMessage, aSender) {
       })();
 
     case kCOMMAND_REQUEST_REGISTERED_ADDONS:
-      return Promise.resolve(gExternalListenerAddons);
+      return (async () => {
+        while (!gExternalListenerAddons) {
+          await wait(10);
+        }
+        return gExternalListenerAddons;
+      })();
 
     case kCOMMAND_REQUEST_SCROLL_LOCK_STATE:
       return Promise.resolve(gScrollLockedBy);
@@ -1568,6 +1577,20 @@ function onMessageExternal(aMessage, aSender) {
   switch (aMessage.type) {
     case kTSTAPI_REGISTER_SELF:
       return (async () => {
+        if (!aMessage.listeningTypes) {
+          // for backward compatibility, send all message types available on TST 2.4.16 by default.
+          aMessage.listeningTypes = [
+            kTSTAPI_NOTIFY_READY,
+            kTSTAPI_NOTIFY_SHUTDOWN,
+            kTSTAPI_NOTIFY_TAB_CLICKED,
+            kTSTAPI_NOTIFY_TAB_MOUSEDOWN,
+            kTSTAPI_NOTIFY_TAB_MOUSEUP,
+            kTSTAPI_NOTIFY_TABBAR_CLICKED,
+            kTSTAPI_NOTIFY_TABBAR_MOUSEDOWN,
+            kTSTAPI_NOTIFY_TABBAR_MOUSEUP
+          ];
+        }
+        aMessage.id = aSender.id;
         gExternalListenerAddons[aSender.id] = aMessage;
         browser.runtime.sendMessage({
           type:    kCOMMAND_BROADCAST_API_REGISTERED,
