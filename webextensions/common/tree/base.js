@@ -194,7 +194,13 @@ function updateUniqueId(aTab) {
 function updateTab(aTab, aNewState = {}, aOptions = {}) {
   if ('url' in aNewState) {
     if (configs.hostnameColorsEnabled) {
-      const tabColor = getHostnameColor(getHostname(aNewState.url));
+      const hostname = getHostname(aNewState.url);
+      let tabColor = getFixedHostnameColor(hostname);
+
+      if (tabColor === null && configs.hostnameColorsStatic) {
+        tabColor = getCalculatedHostnameColor(hostname);
+      }
+      
       if (tabColor !== null) {
         const tabId = Number.parseInt(aTab.dataset.tabId);
         if (getTabById(tabId) !== null) {

@@ -1,11 +1,17 @@
 
 const colorCache = new Map();
 
-function getHostnameColor(hostname) {
+function getFixedHostnameColor(hostname) {
   if (colorCache.size === 0) {
     rebuildColorCache();
   }
   return colorCache.has(hostname) ? colorCache.get(hostname) : null;
+}
+
+
+function getCalculatedHostnameColor(hostname) {
+  const hash = Math.abs(hashString(hostname));
+  return Math.abs(Math.round(hash % 360));
 }
 
 
@@ -105,7 +111,7 @@ function rgbToHsl(r, g, b) {
 
 // https://stackoverflow.com/a/5624139
 function hexToRgb(hex) {
-  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result ? {
     r: parseInt(result[1], 16),
     g: parseInt(result[2], 16),

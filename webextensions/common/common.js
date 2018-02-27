@@ -285,6 +285,7 @@ configs = new Configs({
   hostnameColors: '',
   hostnameColorsEnabled: false,
   hostnameColorsOnly: false,
+  hostnameColorsStatic: false,
 }, {
   syncKeys: `
     counterRole
