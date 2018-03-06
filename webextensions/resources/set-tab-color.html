@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Set tab color</title>
+</head>
+
+<style>
+    .row {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .preset {
+        width: 64px;
+        height: 64px;
+
+        margin: 0.1em;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        border: 2px solid #ffffff;
+    }
+
+    .preset:hover {
+        border: 2px solid #000000;
+    }
+
+    #preview {
+        width: 64px;
+        height: 64px;
+
+        border: 2px solid #000000;
+    }
+</style>
+<body>
+
+<h1>Select color</h1>
+
+<h2>Presets</h2>
+<div class="row">
+    <div class="preset" data-value="0"></div>
+    <div class="preset" data-value="1"></div>
+    <div class="preset" data-value="2"></div>
+    <div class="preset" data-value="3"></div>
+    <div class="preset" data-value="4"></div>
+    <div class="preset" data-value="5"></div>
+    <div class="preset" data-value="6"></div>
+    <div class="preset" data-value="7"></div>
+</div>
+
+<div class="row">
+    <div class="preset" data-value="8"></div>
+    <div class="preset" data-value="9"></div>
+    <div class="preset" data-value="10"></div>
+    <div class="preset" data-value="11"></div>
+    <div class="preset" data-value="12"></div>
+    <div class="preset" data-value="13"></div>
+    <div class="preset" data-value="14"></div>
+    <div class="preset" data-value="15"></div>
+</div>
+
+<div class="row">
+    <div class="preset" data-value="16"></div>
+    <div class="preset" data-value="17"></div>
+    <div class="preset" data-value="18"></div>
+    <div class="preset" data-value="19"></div>
+    <div class="preset" data-value="20"></div>
+    <div class="preset" data-value="21"></div>
+    <div class="preset" data-value="22"></div>
+    <div class="preset" data-value="23"></div>
+</div>
+
+<h2>Choose</h2>
+
+<div id="preview"></div>
+
+<label>
+    <input id="color" type="color" value="#ffffff" />
+</label>
+
+<button id="submit">Set</button>
+
+</body>
+</html>
