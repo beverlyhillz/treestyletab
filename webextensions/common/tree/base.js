@@ -283,12 +283,22 @@ function updateTab(aTab, aNewState = {}, aOptions = {}) {
     window.onTabLabelUpdated && onTabLabelUpdated(aTab);
   }
 
+  const openerOfGroupTab = isGroupTab(aTab) && getOpenerFromGroupTab(aTab);
   if ('favIconUrl' in aNewState ||
        TabFavIconHelper.maybeImageTab(aNewState)) {
     window.onTabFaviconUpdated &&
       onTabFaviconUpdated(
         aTab,
         getSafeFaviconUrl(aNewState.favIconUrl || aNewState.url)
+      );
+  }
+  else if (openerOfGroupTab &&
+           (openerOfGroupTab.apiTab.favIconUrl ||
+            TabFavIconHelper.maybeImageTab(openerOfGroupTab.apiTab))) {
+    window.onTabFaviconUpdated &&
+      onTabFaviconUpdated(
+        aTab,
+        getSafeFaviconUrl(openerOfGroupTab.apiTab.favIconUrl || openerOfGroupTab.apiTab.url)
       );
   }
 
@@ -438,7 +448,7 @@ function getSafeFaviconUrl(aURL) {
       return browser.extension.getURL('resources/icons/extensionGeneric-16.svg');
     default:
       if (/^chrome:\/\//.test(aURL))
-        return browser.extension.getURL('sidebar/styles/icons/globe-16.svg');
+        return browser.extension.getURL('resources/icons/globe-16.svg');
       break;
   }
   return aURL;

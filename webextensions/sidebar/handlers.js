@@ -1225,6 +1225,10 @@ function onMessage(aMessage, aSender, aRespond) {
       gRestoringTabCount--;
       break;
 
+    case kCOMMAND_NOTIFY_TAB_FAVICON_UPDATED:
+      onTabFaviconUpdated(getTabById(aMessage.tab), aMessage.favIconUrl);
+      break;
+
     case kCOMMAND_CHANGE_SUBTREE_COLLAPSED_STATE: {
       if (aMessage.windowId == gTargetWindow) return (async () => {
         await waitUntilTabsAreCreated(aMessage.tab);
