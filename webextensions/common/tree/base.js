@@ -194,10 +194,10 @@ function updateUniqueId(aTab) {
 function updateTab(aTab, aNewState = {}, aOptions = {}) {
   if ('url' in aNewState) {
     if (configs.hostnameColorsEnabled) {
-      const hostname = getHostname(aNewState.url);
-      let tabColor = getFixedHostnameColor(hostname);
+      let tabColor = getFixedHostnameColor(aNewState.url);
 
       if (tabColor === null && configs.hostnameColorsStatic) {
+        const hostname = getDomain(aNewState.url);
         tabColor = getCalculatedHostnameColor(hostname);
       }
       

@@ -1,11 +1,25 @@
 
 const colorCache = new Map();
 
-function getFixedHostnameColor(hostname) {
+function getFixedHostnameColor(url) {
+  const parsed = new URL(url);
+  const hostname = parsed.hostname;
+  const domain = getDomain(url);
+
   if (colorCache.size === 0) {
     rebuildColorCache();
   }
-  return colorCache.has(hostname) ? colorCache.get(hostname) : null;
+
+  // Exact match
+  if (colorCache.has(hostname)) {
+    return colorCache.get(hostname)
+  }
+  else if (colorCache.has('.' + domain)) {
+    return colorCache.get('.' + domain);
+  }
+  else {
+    return null;
+  }
 }
 
 
@@ -15,7 +29,7 @@ function getCalculatedHostnameColor(hostname) {
 }
 
 
-function getHostname(url) {
+function getDomain(url) {
   const parsed = new URL(url);
 
   if (parsed.hostname) {
@@ -58,7 +72,7 @@ function rebuildColorCache() {
 }
 
 
-function onConfigChange(aChangedKey) {
+function onHostnameColorsConfigChange(aChangedKey) {
   switch (aChangedKey) {
     case 'hostnameColors':
       rebuildColorCache();
@@ -66,7 +80,7 @@ function onConfigChange(aChangedKey) {
   }
 }
 
-configs.$addObserver(onConfigChange);
+configs.$addObserver(onHostnameColorsConfigChange);
 
 
 

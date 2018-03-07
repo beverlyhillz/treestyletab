@@ -349,16 +349,23 @@
             <a href="https://en.wikipedia.org/wiki/Hue">hue</a> with a number from 0-360
             or a #rrggbb color value. Lines which start with // will be ignored.
         </p>
+        <p>
+            You can wildcard match domains by prefixing them with a dot. For example ".mozilla.org" will match
+            any subdomains of mozilla.org, while "mozilla.org" will only match mozilla.org
+        </p>
         <pre>
             // Comments
             hue; example.com
             #rrggbb; example.com
 
             // Example:
-            // This would colorize google.de tabs in a blue color and mozilla.org tabs with bright red
+            // This would colorize google.de tabs in a blue color, www.mozilla.org in bright red, hacks.mozilla.org in
+            // green and all other mozilla.org subdomains in blue
 
             150; google.de
-            #ff0000; mozilla.org
+            #ff0000; www.mozilla.org
+            #00ff00; hacks.mozilla.org
+            #0000ff; .mozilla.org
         </pre>
         <textarea id="hostnameColors"
                   rows="3"
