@@ -327,8 +327,6 @@ export const duplicatingTabsInWindow = new Map();
 export const toBeGroupedTabsInWindow = new Map();
 export const loadingTabsInWindow     = new Map();
 export const unsynchronizedTabsInWindow = new Map();
-export const frontmostTabsInWindow     = new Map();
-export const frontmostTabAncestorsInWindow = new Map();
 
 function createMapWithName(name) {
   const map = new Map();
@@ -359,8 +357,6 @@ export function prepareIndexesForWindow(windowId) {
   toBeGroupedTabsInWindow.set(windowId, createMapWithName(`to-be-grouped tabs in window ${windowId}`));
   loadingTabsInWindow.set(windowId, createMapWithName(`loading tabs in window ${windowId}`));
   unsynchronizedTabsInWindow.set(windowId, createMapWithName(`unsynchronized tabs in window ${windowId}`));
-  frontmostTabsInWindow.set(windowId, createMapWithName(`frontmost tabs in window ${windowId}`));
-  frontmostTabAncestorsInWindow.set(windowId, createMapWithName(`frontmost tab ancestors in window ${windowId}`));
 }
 
 export function unprepareIndexesForWindow(windowId) {
@@ -385,8 +381,6 @@ export function unprepareIndexesForWindow(windowId) {
   toBeGroupedTabsInWindow.delete(windowId);
   loadingTabsInWindow.delete(windowId);
   unsynchronizedTabsInWindow.delete(windowId);
-  frontmostTabsInWindow.delete(windowId);
-  frontmostTabAncestorsInWindow.delete(windowId);
 }
 
 export function updateIndexesForTab(tab) {
@@ -482,8 +476,6 @@ export function removeTabFromIndexes(tab) {
   removeToBeGroupedTab(tab);
   removeLoadingTab(tab);
   removeUnsynchronizedTab(tab);
-  removeFrontmostTab(tab);
-  removeFrontmostTabAncestor(tab);
 }
 
 function addTabToIndex(tab, indexes) {
@@ -648,20 +640,6 @@ export function addUnsynchronizedTab(tab) {
 }
 export function removeUnsynchronizedTab(tab) {
   removeTabFromIndex(tab, unsynchronizedTabsInWindow);
-}
-
-export function addFrontmostTab(tab) {
-  addTabToIndex(tab, frontmostTabsInWindow);
-}
-export function removeFrontmostTab(tab) {
-  removeTabFromIndex(tab, frontmostTabsInWindow);
-}
-
-export function addFrontmostTabAncestor(tab) {
-  addTabToIndex(tab, frontmostTabAncestorsInWindow);
-}
-export function removeFrontmostTabAncestor(tab) {
-  removeTabFromIndex(tab, frontmostTabAncestorsInWindow);
 }
 
 

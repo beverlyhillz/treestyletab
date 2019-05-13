@@ -828,21 +828,17 @@ export default class Tab {
 
   setFrontmost() {
     this.clearFrontmost();
-    TabsStore.addFrontmostTab(this.tab);
     this.addState(Constants.kTAB_STATE_FRONTMOST);
     for (const ancestor of this.ancestors) {
-      TabsStore.addFrontmostTabAncestor(ancestor);
       ancestor.$TST.addState(Constants.kTAB_STATE_HAS_FRONTMOST_MEMBER);
     }
   }
 
-  clearFrontmost() {
+  clearFrontmost(options = {}) {
     const rootTab = this.rootTab || this.tab;
     for (const tab of [rootTab].concat(rootTab.$TST.descendants)) {
-      TabsStore.removeFrontmostTab(tab);
-      tab.$TST.removeState(Constants.kTAB_STATE_FRONTMOST);
-      TabsStore.removeFrontmostTabAncestor(tab);
-      tab.$TST.removeState(Constants.kTAB_STATE_HAS_FRONTMOST_MEMBER);
+      tab.$TST.removeState(Constants.kTAB_STATE_FRONTMOST, options);
+      tab.$TST.removeState(Constants.kTAB_STATE_HAS_FRONTMOST_MEMBER, options);
     }
   }
 

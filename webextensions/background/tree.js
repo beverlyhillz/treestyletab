@@ -704,7 +704,7 @@ export function collapseExpandTabAndSubtree(tab, params = {}) {
   else if (!params.collapsed &&
            !tab.active &&
            tab.$TST.isFrontmost) {
-    tab.$TST.clearFrontmost();
+    tab.$TST.clearFrontmost({ broadcast: true });
   }
 
   if (!tab.$TST.subtreeCollapsed) {
