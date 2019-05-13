@@ -138,6 +138,8 @@ function setDragData(dragData) {
 /* helpers */
 
 function getDragDataFromOneTab(tab) {
+  if (tab && tab.$TST.collapsed)
+    tab = tab.$TST.nearestVisibleAncestorOrSelf;
   if (!tab)
     return {
       tab:      null,
