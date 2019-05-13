@@ -692,25 +692,29 @@ export function collapseExpandTabAndSubtree(tab, params = {}) {
   if (!parent)
     return;
 
+  const changed = params.collapsed != tab.$TST.collapsed;
   collapseExpandTab(tab, params);
 
-  if (params.collapsed &&
-      tab.active) {
-    if (configs.allowCollapsedActiveDescendant) {
-      const visibleAncestor = tab.$TST.nearestVisibleAncestorOrSelf;
+  if (changed) {
+    if (params.collapsed ||
+        tab.$TST.hasFrontmostMember) {
+      const frontmostTab = tab.active ? tab : tab.$TST.descendants.filter(tab => tab.$TST.isFrontmost)[0] || tab;
+      const visibleAncestor = params.collapsed ? tab.$TST.nearestVisibleAncestorOrSelf : tab;
       if (visibleAncestor && visibleAncestor.$TST)
-        tab.$TST.setAttribute(Constants.kFRONTMOST_LEVEL, visibleAncestor.$TST.getAttribute(Constants.kLEVEL), { broadcast: true });
+        frontmostTab.$TST.setAttribute(Constants.kFRONTMOST_LEVEL, visibleAncestor.$TST.getAttribute(Constants.kLEVEL), {   broadcast: true });
     }
-    else {
+    if (params.collapsed &&
+        tab.active &&
+        !configs.allowCollapsedActiveDescendant) {
       const newSelection = tab.$TST.nearestVisibleAncestorOrSelf;
       logCollapseExpand('current tab is going to be collapsed, switch to ', newSelection.id);
       TabsInternalOperation.activateTab(newSelection, { silently: true });
     }
-  }
-  else if (!params.collapsed &&
-           !tab.active &&
-           tab.$TST.isFrontmost) {
-    tab.$TST.clearFrontmost({ broadcast: true });
+    else if (!params.collapsed &&
+             !tab.active &&
+             tab.$TST.isFrontmost) {
+      tab.$TST.clearFrontmost({ broadcast: true });
+    }
   }
 
   if (!tab.$TST.subtreeCollapsed) {
