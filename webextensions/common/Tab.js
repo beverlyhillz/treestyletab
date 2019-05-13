@@ -387,10 +387,11 @@ export default class Tab {
   //===================================================================
 
   set parent(tab) {
-    const forward = this.states.has(Constants.kTAB_STATE_FORWARD);
-    if (forward)
-      this.clearForward();
     const oldParent = this.parent;
+    const forward = this.states.has(Constants.kTAB_STATE_FORWARD);
+    if (forward &&
+        (tab && tab.id) != (oldParent && oldParent.id))
+      this.clearForward();
     this.parentId = tab && (typeof tab == 'number' ? tab : tab.id);
     this.invalidateCachedAncestors();
     const parent = this.parent;
@@ -399,6 +400,8 @@ export default class Tab {
       parent.$TST.invalidateCachedDescendants();
       parent.$TST.inheritSoundStateFromChildren();
       TabsStore.removeRootTab(this.tab);
+      if (forward)
+        this.setForward();
     }
     else {
       this.removeAttribute(Constants.kPARENT);
@@ -406,8 +409,6 @@ export default class Tab {
     }
     if (oldParent && oldParent.id != this.parentId)
       oldParent.$TST.children = oldParent.$TST.childIds.filter(id => id != this.tab.id);
-    if (parent && forward)
-      this.setForward();
     return tab;
   }
   get parent() {
