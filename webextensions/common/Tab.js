@@ -287,6 +287,10 @@ export default class Tab {
     return !!(highlightedTabs && highlightedTabs.size > 1);
   }
 
+  get isFrontmost() {
+    return this.states.has(Constants.kTAB_STATE_FRONTMOST);
+  }
+
   //===================================================================
   // neighbor tabs
   //===================================================================
@@ -388,10 +392,10 @@ export default class Tab {
 
   set parent(tab) {
     const oldParent = this.parent;
-    const forward = this.states.has(Constants.kTAB_STATE_FORWARD);
-    if (forward &&
+    const frontmost = this.states.has(Constants.kTAB_STATE_FRONTMOST);
+    if (frontmost &&
         (tab && tab.id) != (oldParent && oldParent.id))
-      this.clearForward();
+      this.clearFrontmost();
     this.parentId = tab && (typeof tab == 'number' ? tab : tab.id);
     this.invalidateCachedAncestors();
     const parent = this.parent;
@@ -400,8 +404,8 @@ export default class Tab {
       parent.$TST.invalidateCachedDescendants();
       parent.$TST.inheritSoundStateFromChildren();
       TabsStore.removeRootTab(this.tab);
-      if (forward)
-        this.setForward();
+      if (frontmost)
+        this.setFrontmost();
     }
     else {
       this.removeAttribute(Constants.kPARENT);
@@ -822,23 +826,23 @@ export default class Tab {
     delete this.attributes[attribute];
   }
 
-  setForward() {
-    this.clearForward();
-    TabsStore.addForwardTab(this.tab);
-    this.addState(Constants.kTAB_STATE_FORWARD);
+  setFrontmost() {
+    this.clearFrontmost();
+    TabsStore.addFrontmostTab(this.tab);
+    this.addState(Constants.kTAB_STATE_FRONTMOST);
     for (const ancestor of this.ancestors) {
-      TabsStore.addForwardTabAncestor(ancestor);
-      ancestor.$TST.addState(Constants.kTAB_STATE_HAS_FORWARD_MEMBER);
+      TabsStore.addFrontmostTabAncestor(ancestor);
+      ancestor.$TST.addState(Constants.kTAB_STATE_HAS_FRONTMOST_MEMBER);
     }
   }
 
-  clearForward() {
+  clearFrontmost() {
     const rootTab = this.rootTab || this.tab;
     for (const tab of [rootTab].concat(rootTab.$TST.descendants)) {
-      TabsStore.removeForwardTab(tab);
-      tab.$TST.removeState(Constants.kTAB_STATE_FORWARD);
-      TabsStore.removeForwardTabAncestor(tab);
-      tab.$TST.removeState(Constants.kTAB_STATE_HAS_FORWARD_MEMBER);
+      TabsStore.removeFrontmostTab(tab);
+      tab.$TST.removeState(Constants.kTAB_STATE_FRONTMOST);
+      TabsStore.removeFrontmostTabAncestor(tab);
+      tab.$TST.removeState(Constants.kTAB_STATE_HAS_FRONTMOST_MEMBER);
     }
   }
 

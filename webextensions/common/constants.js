@@ -129,7 +129,7 @@ export const kCONTEXTUAL_IDENTITY_SELECTOR_CONTEXT_MENU = 'contextual-identities
 export const kNEWTAB_ACTION_SELECTOR       = 'newtab-action-selector';
 
 export const kTAB_STATE_ACTIVE                    = 'active';
-export const kTAB_STATE_FORWARD                   = 'forward';
+export const kTAB_STATE_FRONTMOST                 = 'frontmost';
 export const kTAB_STATE_PINNED                    = 'pinned';
 export const kTAB_STATE_LAST_ROW                  = 'last-row';
 export const kTAB_STATE_AUDIBLE                   = 'audible';
@@ -137,7 +137,7 @@ export const kTAB_STATE_SOUND_PLAYING             = 'sound-playing';
 export const kTAB_STATE_HAS_SOUND_PLAYING_MEMBER  = 'has-sound-playing-member';
 export const kTAB_STATE_MUTED                     = 'muted';
 export const kTAB_STATE_HAS_MUTED_MEMBER          = 'has-muted-member';
-export const kTAB_STATE_HAS_FORWARD_MEMBER        = 'has-forward-member';
+export const kTAB_STATE_HAS_FRONTMOST_MEMBER      = 'has-frontmost-member';
 export const kTAB_STATE_PRIVATE_BROWSING          = 'private-browsing';
 export const kTAB_STATE_HIDDEN                    = 'hidden';
 export const kTAB_STATE_ANIMATION_READY           = 'animation-ready';

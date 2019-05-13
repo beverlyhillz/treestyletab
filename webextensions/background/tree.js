@@ -701,6 +701,11 @@ export function collapseExpandTabAndSubtree(tab, params = {}) {
     logCollapseExpand('current tab is going to be collapsed, switch to ', newSelection.id);
     TabsInternalOperation.activateTab(newSelection, { silently: true });
   }
+  else if (!params.collapsed &&
+           !tab.active &&
+           tab.$TST.isFrontmost) {
+    tab.$TST.clearFrontmost();
+  }
 
   if (!tab.$TST.subtreeCollapsed) {
     const children = tab.$TST.children;
