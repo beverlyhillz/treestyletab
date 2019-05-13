@@ -5,8 +5,8 @@
 */
 'use strict';
 
-export const kBACKGROUND_CONTENTS_VERSION = 5;
-export const kSIDEBAR_CONTENTS_VERSION    = 8;
+export const kBACKGROUND_CONTENTS_VERSION = 6;
+export const kSIDEBAR_CONTENTS_VERSION    = 9;
 
 export const kCOMMAND_RELOAD                         = 'treestyletab:reload';
 export const kCOMMAND_PING_TO_BACKGROUND             = 'treestyletab:ping-to-background';
@@ -77,6 +77,7 @@ export const kCOMMAND_BLOCK_USER_OPERATIONS   = 'treestyletab:block-user-operati
 export const kCOMMAND_UNBLOCK_USER_OPERATIONS = 'treestyletab:unblock-user-operations';
 export const kCOMMAND_PROGRESS_USER_OPERATIONS = 'treestyletab:progress-user-operations';
 export const kCOMMAND_BROADCAST_TAB_STATE     = 'treestyletab:broadcast-tab-state';
+export const kCOMMAND_BROADCAST_TAB_ATTRIBUTE = 'treestyletab:broadcast-tab-attribute';
 
 export const kCOMMAND_BOOKMARK_TAB_WITH_DIALOG  = 'treestyletab:bookmark-tab-with-dialog';
 export const kCOMMAND_BOOKMARK_TABS_WITH_DIALOG = 'treestyletab:bookmark-tabs-with-dialog';
@@ -94,6 +95,7 @@ export const kAPI_WINDOW_ID    = 'data-window-id';
 export const kPARENT        = 'data-parent-id';
 export const kCHILDREN      = 'data-child-ids';
 export const kLEVEL         = 'data-level';
+export const kFRONTMOST_LEVEL = 'data-frontmost-level';
 export const kCLOSED_SET_ID = 'data-closed-set-id';
 export const kCURRENT_URI   = 'data-current-uri';
 export const kMAX_TREE_LEVEL = 'data-max-tree-level';

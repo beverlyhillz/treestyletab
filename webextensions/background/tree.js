@@ -695,11 +695,17 @@ export function collapseExpandTabAndSubtree(tab, params = {}) {
   collapseExpandTab(tab, params);
 
   if (params.collapsed &&
-      tab.active &&
-      !configs.allowCollapsedActiveDescendant) {
+      tab.active) {
+    if (configs.allowCollapsedActiveDescendant) {
+      const visibleAncestor = tab.$TST.nearestVisibleAncestorOrSelf;
+      if (visibleAncestor && visibleAncestor.$TST)
+        tab.$TST.setAttribute(Constants.kFRONTMOST_LEVEL, visibleAncestor.$TST.getAttribute(Constants.kLEVEL), { broadcast: true });
+    }
+    else {
     const newSelection = tab.$TST.nearestVisibleAncestorOrSelf;
     logCollapseExpand('current tab is going to be collapsed, switch to ', newSelection.id);
     TabsInternalOperation.activateTab(newSelection, { silently: true });
+    }
   }
   else if (!params.collapsed &&
            !tab.active &&

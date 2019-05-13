@@ -97,7 +97,8 @@ export function setTabActive(tab) {
   tab.$TST.removeState(Constants.kTAB_STATE_NOT_ACTIVATED_SINCE_LOAD);
   tab.$TST.removeState(Constants.kTAB_STATE_UNREAD, { permanently: true });
   TabsStore.activeTabsInWindow.get(tab.windowId).add(tab);
-  tab.$TST.setFrontmost();
+  const isBackground = SidebarConnection.isInitialized();
+  tab.$TST.setFrontmost({ broadcast: isBackground });
   return oldActiveTabs;
 }
 

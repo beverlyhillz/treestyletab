@@ -393,9 +393,10 @@ export default class Tab {
   set parent(tab) {
     const oldParent = this.parent;
     const frontmost = this.states.has(Constants.kTAB_STATE_FRONTMOST);
+    const isBackground = SidebarConnection.isInitialized();
     if (frontmost &&
         (tab && tab.id) != (oldParent && oldParent.id))
-      this.clearFrontmost();
+      this.clearFrontmost({ broadcast: isBackground });
     this.parentId = tab && (typeof tab == 'number' ? tab : tab.id);
     this.invalidateCachedAncestors();
     const parent = this.parent;
@@ -405,7 +406,7 @@ export default class Tab {
       parent.$TST.inheritSoundStateFromChildren();
       TabsStore.removeRootTab(this.tab);
       if (frontmost)
-        this.setFrontmost();
+        this.setFrontmost({ broadcast: isBackground });
     }
     else {
       this.removeAttribute(Constants.kPARENT);
@@ -810,27 +811,42 @@ export default class Tab {
   }
 
 
-  setAttribute(attribute, value) {
+  setAttribute(attribute, value, options = {}) {
     if (this.element)
       this.element.setAttribute(attribute, value);
+
     this.attributes[attribute] = value;
+
+    if (options.broadcast) {
+      const broadcastedAttributes = {};
+      broadcastedAttributes[attribute] = value;
+      Tab.broadcastAttribute(this.tab, {
+        attributes: broadcastedAttributes
+      });
+    }
   }
 
   getAttribute(attribute) {
     return this.attributes[attribute];
   }
 
-  removeAttribute(attribute) {
+  removeAttribute(attribute, options = {}) {
     if (this.element)
       this.element.removeAttribute(attribute);
+
     delete this.attributes[attribute];
+
+    if (options.broadcast)
+      Tab.broadcastAttribute(this.tab, {
+        remove: [attribute]
+      });
   }
 
-  setFrontmost() {
-    this.clearFrontmost();
-    this.addState(Constants.kTAB_STATE_FRONTMOST);
+  setFrontmost(options = {}) {
+    this.clearFrontmost(options);
+    this.addState(Constants.kTAB_STATE_FRONTMOST, options);
     for (const ancestor of this.ancestors) {
-      ancestor.$TST.addState(Constants.kTAB_STATE_HAS_FRONTMOST_MEMBER);
+      ancestor.$TST.addState(Constants.kTAB_STATE_HAS_FRONTMOST_MEMBER, options);
     }
   }
 
@@ -1572,6 +1588,20 @@ Tab.broadcastState = (tabs, options = {}) => {
     tabIds:   tabs.map(tab => tab.id),
     windowId: tabs[0].windowId,
     add:      options.add || [],
+    remove:   options.remove || []
+  });
+};
+
+Tab.broadcastAttribute = (tabs, options = {}) => {
+  if (!Array.isArray(tabs))
+    tabs = [tabs];
+  if (tabs.length == 0)
+    return;
+  SidebarConnection.sendMessage({
+    type:     Constants.kCOMMAND_BROADCAST_TAB_ATTRIBUTE,
+    tabIds:   tabs.map(tab => tab.id),
+    windowId: tabs[0].windowId,
+    attributes: options.attributes || {},
     remove:   options.remove || []
   });
 };

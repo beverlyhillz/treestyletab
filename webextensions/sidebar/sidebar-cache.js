@@ -532,6 +532,11 @@ BackgroundConnection.onMessage.addListener(async message => {
       reserveToUpdateCachedTabbar();
       break;
 
+    case Constants.kCOMMAND_BROADCAST_TAB_STATE:
+    case Constants.kCOMMAND_BROADCAST_TAB_ATTRIBUTE:
+      reserveToUpdateCachedTabbar();
+      break;
+
     case Constants.kCOMMAND_NOTIFY_TAB_UPDATED:
     case Constants.kCOMMAND_NOTIFY_TAB_LABEL_UPDATED:
     case Constants.kCOMMAND_NOTIFY_TAB_FAVICON_UPDATED:

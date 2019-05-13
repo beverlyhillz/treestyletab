@@ -811,6 +811,25 @@ BackgroundConnection.onMessage.addListener(async message => {
       }
     }; break;
 
+    case Constants.kCOMMAND_BROADCAST_TAB_ATTRIBUTE: {
+      if (!message.tabIds.length)
+        break;
+      await Tab.waitUntilTracked(message.tabIds, { element: true });
+      const attributes = message.attributes || {};
+      const remove = message.remove || [];
+      log('apply broadcasted tab attribute ', message.tabIds, {
+        attributes,
+        remove: remove.join(',')
+      });
+      for (const id of message.tabIds) {
+        const tab = Tab.get(id);
+        if (!tab)
+          continue;
+        Object.keys(attributes).forEach(attribute => tab.$TST.setAttribute(attribute, attributes[attribute]));
+        remove.forEach(state => tab.$TST.removeAttribute(state));
+      }
+    }; break;
+
     case Constants.kCOMMAND_NOTIFY_TAB_CREATING: {
       const nativeTab = message.tab;
       nativeTab.reindexedBy = `creating (${nativeTab.index})`;
