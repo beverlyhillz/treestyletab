@@ -387,6 +387,9 @@ export default class Tab {
   //===================================================================
 
   set parent(tab) {
+    const forward = this.states.has(Constants.kTAB_STATE_FORWARD);
+    if (forward)
+      this.clearForward();
     const oldParent = this.parent;
     this.parentId = tab && (typeof tab == 'number' ? tab : tab.id);
     this.invalidateCachedAncestors();
@@ -403,6 +406,8 @@ export default class Tab {
     }
     if (oldParent && oldParent.id != this.parentId)
       oldParent.$TST.children = oldParent.$TST.childIds.filter(id => id != this.tab.id);
+    if (parent && forward)
+      this.setForward();
     return tab;
   }
   get parent() {
@@ -814,6 +819,26 @@ export default class Tab {
     if (this.element)
       this.element.removeAttribute(attribute);
     delete this.attributes[attribute];
+  }
+
+  setForward() {
+    this.clearForward();
+    TabsStore.addForwardTab(this.tab);
+    this.addState(Constants.kTAB_STATE_FORWARD);
+    for (const ancestor of this.ancestors) {
+      TabsStore.addForwardTabAncestor(ancestor);
+      ancestor.$TST.addState(Constants.kTAB_STATE_HAS_FORWARD_MEMBER);
+    }
+  }
+
+  clearForward() {
+    const rootTab = this.rootTab || this.tab;
+    for (const tab of [rootTab].concat(rootTab.$TST.descendants)) {
+      TabsStore.removeForwardTab(tab);
+      tab.$TST.removeState(Constants.kTAB_STATE_FORWARD);
+      TabsStore.removeForwardTabAncestor(tab);
+      tab.$TST.removeState(Constants.kTAB_STATE_HAS_FORWARD_MEMBER);
+    }
   }
 
 

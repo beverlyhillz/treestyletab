@@ -231,12 +231,19 @@ ul {
 .tab:not(.pinned).collapsed,
 .tab.duplicating {
   margin-top: calc(0px - var(--tab-size));
+}
+
+.tab.removing,
+.tab:not(.pinned).collapsed:not(.forward),
+:root:not(.allow-collapsed-active-descendant) .tab:not(.pinned).collapsed,
+.tab.duplicating {
   opacity: 0;
   pointer-events: none;
   z-index: -100;
 }
 
-.tab:not(.pinned).collapsed.collapsed-completely {
+:root .tab:not(.pinned).collapsed.collapsed-completely:not(.forward),
+:root:not(.allow-collapsed-active-descendant) .tab:not(.pinned).collapsed.collapsed-completely.forward {
   visibility: collapse;
 }
 
@@ -299,6 +306,29 @@ ul {
 
 .tab .extra-items-container.behind {
   z-index: 10;
+}
+
+
+/* put active tab forward on a collapsed tree */
+
+:root.allow-collapsed-active-descendant .tab > * {
+  transition: opacity var(--collapse-animation);
+}
+
+:root.allow-collapsed-active-descendant .tab:not(.pinned).collapsed.forward .twisty,
+:root.allow-collapsed-active-descendant .tab:not(.pinned).collapsed.forward .closebox,
+:root.allow-collapsed-active-descendant .tab.subtree-collapsed.has-forward-member:not(.forward) .favicon,
+:root.allow-collapsed-active-descendant .tab.subtree-collapsed.has-forward-member:not(.forward) .label,
+:root.allow-collapsed-active-descendant .tab.subtree-collapsed.has-forward-member:not(.forward) .counter,
+:root.allow-collapsed-active-descendant .tab.subtree-collapsed.has-forward-member:not(.forward) .burster,
+:root.allow-collapsed-active-descendant .tab.subtree-collapsed.has-forward-member:not(.forward) .contextual-identity-marker,
+:root.allow-collapsed-active-descendant .tab.subtree-collapsed.has-forward-member:not(.forward) .extra-items-container {
+  opacity: 0;
+  pointer-events: none;
+}
+
+:root.allow-collapsed-active-descendant .tab:not(.pinned).collapsed.forward .favicon {
+  pointer-events: none;
 }
 
 

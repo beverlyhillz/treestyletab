@@ -70,7 +70,7 @@ Tab.onActivating.addListener((tab, info = {}) => { // return false if the activa
       }
       handleNewActiveTab(tab, info);
     }
-    else {
+    else if (!configs.allowCollapsedActiveDescendant) {
       log('=> reaction for focusing collapsed descendant');
       let successor = tab.$TST.nearestVisibleAncestorOrSelf;
       if (!successor) // this seems invalid case...

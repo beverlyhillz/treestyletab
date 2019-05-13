@@ -118,6 +118,8 @@ export const configs = new Configs({
 
   fixupTreeOnTabVisibilityChanged: false,
 
+  allowCollapsedActiveDescendant: false,
+
 
   // grouping
   autoGroupNewTabs: true,

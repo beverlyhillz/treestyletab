@@ -151,6 +151,7 @@ export async function init() {
 
   onConfigChange('colorScheme');
   onConfigChange('simulateSVGContextFill');
+  onConfigChange('allowCollapsedActiveDescendant');
   onInit.dispatch();
 
   const promisedScrollPosition = browser.sessions.getWindowValue(mTargetWindow, Constants.kWINDOW_STATE_SCROLL_POSITION).catch(ApiTabs.createErrorHandler());
@@ -870,6 +871,18 @@ function onConfigChange(changedKey) {
         rootClasses.add('simulate-svg-context-fill');
       else
         rootClasses.remove('simulate-svg-context-fill');
+      break;
+
+    case 'allowCollapsedActiveDescendant':
+      if (configs[changedKey]) {
+        rootClasses.add('allow-collapsed-active-descendant');
+      }
+      else {
+        rootClasses.remove('allow-collapsed-active-descendant');
+        const activeTab = Tab.getActiveTab(TabsStore.getWindow());
+        if (activeTab && activeTab.$TST.collapsed)
+          TabsInternalOperation.activateTab(activeTab.$TST.nearestVisibleAncestorOrSelf);
+      }
       break;
   }
 }
