@@ -291,6 +291,10 @@ export default class Tab {
     return this.states.has(Constants.kTAB_STATE_FRONTMOST);
   }
 
+  get hasFrontmostMember() {
+    return this.states.has(Constants.kTAB_STATE_HAS_FRONTMOST_MEMBER);
+  }
+
   //===================================================================
   // neighbor tabs
   //===================================================================
@@ -392,7 +396,7 @@ export default class Tab {
 
   set parent(tab) {
     const oldParent = this.parent;
-    const frontmost = this.states.has(Constants.kTAB_STATE_FRONTMOST);
+    const frontmost = this.isFrontmost;
     const isBackground = SidebarConnection.isInitialized();
     if (frontmost &&
         (tab && tab.id) != (oldParent && oldParent.id))
@@ -843,18 +847,23 @@ export default class Tab {
   }
 
   setFrontmost(options = {}) {
+    if (this.isFrontmost)
+      return;
     this.clearFrontmost(options);
     this.addState(Constants.kTAB_STATE_FRONTMOST, options);
     for (const ancestor of this.ancestors) {
-      ancestor.$TST.addState(Constants.kTAB_STATE_HAS_FRONTMOST_MEMBER, options);
+      if (!ancestor.$TST.hasFrontmostMember)
+        ancestor.$TST.addState(Constants.kTAB_STATE_HAS_FRONTMOST_MEMBER, options);
     }
   }
 
   clearFrontmost(options = {}) {
     const rootTab = this.rootTab || this.tab;
     for (const tab of [rootTab].concat(rootTab.$TST.descendants)) {
-      tab.$TST.removeState(Constants.kTAB_STATE_FRONTMOST, options);
-      tab.$TST.removeState(Constants.kTAB_STATE_HAS_FRONTMOST_MEMBER, options);
+      if (tab.$TST.isFrontmost)
+        tab.$TST.removeState(Constants.kTAB_STATE_FRONTMOST, options);
+      if (tab.$TST.hasFrontmostMember)
+        tab.$TST.removeState(Constants.kTAB_STATE_HAS_FRONTMOST_MEMBER, options);
     }
   }
 
