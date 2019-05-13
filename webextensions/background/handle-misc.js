@@ -332,9 +332,11 @@ function onMessage(message, sender) {
 
         logMouseEvent('Sending message to listeners');
         const serializedTab = TSTAPI.serializeTab(tab);
+        const serializedNearestVisibleAncestor = tab.$TST.isFrontmost ? TSTAPI.serializeTab(tab.$TST.nearestVisibleAncestorOrSelf) : serializedTab;
         const mousedownNotified = TSTAPI.sendMessage(Object.assign({}, message, {
           type: TSTAPI.kNOTIFY_TAB_MOUSEDOWN,
-          tab:  serializedTab
+          tab:  serializedTab,
+          nearestVisibleAncestor: serializedNearestVisibleAncestor
         }));
 
         // We must send tab-mouseup after tab-mousedown is notified.
@@ -343,7 +345,8 @@ function onMessage(message, sender) {
           results = results.concat(
             await TSTAPI.sendMessage(Object.assign({}, message, {
               type: TSTAPI.kNOTIFY_TAB_CLICKED,
-              tab:  serializedTab
+              tab:  serializedTab,
+              nearestVisibleAncestor: serializedNearestVisibleAncestor
             }))
           );
           if (results.some(result => result && result.result))

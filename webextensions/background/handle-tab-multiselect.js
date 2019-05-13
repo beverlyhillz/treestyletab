@@ -44,6 +44,8 @@ const mLastClickedTabInWindow = new Map();
 const mIsInSelectionSession   = new Map();
 
 export async function updateSelectionByTabClick(tab, event) {
+  if (tab.$TST.isFrontmost)
+    tab = tab.$TST.nearestVisibleAncestorOrSelf;
   const ctrlKeyPressed     = event.ctrlKey || (event.metaKey && /^Mac/i.test(navigator.platform));
   const activeTab          = Tab.getActiveTab(tab.windowId);
   const highlightedTabIds  = new Set(Tab.getHighlightedTabs(tab.windowId).map(tab => tab.id));
