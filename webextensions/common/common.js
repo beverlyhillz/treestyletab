@@ -118,7 +118,7 @@ export const configs = new Configs({
 
   fixupTreeOnTabVisibilityChanged: false,
 
-  allowCollapsedActiveDescendant: false,
+  allowCollapsedActiveDescendant: true,
 
 
   // grouping
