@@ -702,9 +702,9 @@ export function collapseExpandTabAndSubtree(tab, params = {}) {
         tab.$TST.setAttribute(Constants.kFRONTMOST_LEVEL, visibleAncestor.$TST.getAttribute(Constants.kLEVEL), { broadcast: true });
     }
     else {
-    const newSelection = tab.$TST.nearestVisibleAncestorOrSelf;
-    logCollapseExpand('current tab is going to be collapsed, switch to ', newSelection.id);
-    TabsInternalOperation.activateTab(newSelection, { silently: true });
+      const newSelection = tab.$TST.nearestVisibleAncestorOrSelf;
+      logCollapseExpand('current tab is going to be collapsed, switch to ', newSelection.id);
+      TabsInternalOperation.activateTab(newSelection, { silently: true });
     }
   }
   else if (!params.collapsed &&
