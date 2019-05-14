@@ -62,6 +62,10 @@ Tab.onActivating.addListener((tab, info = {}) => { // return false if the activa
     else if (configs.autoExpandOnCollapsedChildActive &&
              !shouldSkipCollapsed) {
       log('=> reaction for autoExpandOnCollapsedChildActive');
+      if (configs.allowCollapsedActiveDescendant) {
+        handleNewActiveTab(tab, info);
+        return true;
+      }
       for (const ancestor of tab.$TST.ancestors) {
         Tree.collapseExpandSubtree(ancestor, {
           collapsed: false,
@@ -72,8 +76,7 @@ Tab.onActivating.addListener((tab, info = {}) => { // return false if the activa
     }
     else {
       log('=> reaction for focusing collapsed descendant');
-      if (configs.allowCollapsedActiveDescendant &&
-          !configs.autoExpandOnCollapsedChildActive) {
+      if (configs.allowCollapsedActiveDescendant) {
         handleNewActiveTab(tab, info);
         return true;
       }
