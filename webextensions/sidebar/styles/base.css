@@ -288,6 +288,10 @@ ul {
   display: none;
 }
 
+.tab .twisty {
+  z-index: 6000;
+}
+
 .tab .highlighter {
   z-index: 5000;
 }
