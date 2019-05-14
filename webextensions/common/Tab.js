@@ -291,6 +291,10 @@ export default class Tab {
     return this.states.has(Constants.kTAB_STATE_FRONTMOST);
   }
 
+  get isCandidateFrontmost() {
+    return Constants.kTAB_STATE_CANDIDATE_FRONTMOST in this.attributes;
+  }
+
   get hasFrontmostMember() {
     return this.states.has(Constants.kTAB_STATE_HAS_FRONTMOST_MEMBER);
   }
@@ -847,14 +851,7 @@ export default class Tab {
   }
 
   setFrontmost(options = {}) {
-    if (this.isFrontmost)
-      return;
-    this.clearFrontmost(options);
-    this.addState(Constants.kTAB_STATE_FRONTMOST, options);
-    for (const ancestor of this.ancestors) {
-      if (!ancestor.$TST.hasFrontmostMember)
-        ancestor.$TST.addState(Constants.kTAB_STATE_HAS_FRONTMOST_MEMBER, options);
-    }
+    this.setAttribute(Constants.kTAB_STATE_CANDIDATE_FRONTMOST, Date.now(), options);
   }
 
   clearFrontmost(options = {}) {

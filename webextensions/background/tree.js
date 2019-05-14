@@ -698,10 +698,24 @@ export function collapseExpandTabAndSubtree(tab, params = {}) {
   if (changed) {
     if (params.collapsed ||
         tab.$TST.hasFrontmostMember) {
-      const frontmostTab = tab.active ? tab : tab.$TST.descendants.filter(tab => tab.$TST.isFrontmost)[0] || tab;
-      const visibleAncestor = params.collapsed ? tab.$TST.nearestVisibleAncestorOrSelf : tab;
-      if (visibleAncestor && visibleAncestor.$TST)
-        frontmostTab.$TST.setAttribute(Constants.kFRONTMOST_LEVEL, visibleAncestor.$TST.getAttribute(Constants.kLEVEL), {   broadcast: true });
+      const candidateFrontmostTabs = tab.active ? [tab] : tab.$TST.descendants.filter(tab => tab.$TST.isCandidateFrontmost);
+      const frontmostTab = candidateFrontmostTabs.sort((a, b) => b.$TST.attributes[Constants.kTAB_STATE_CANDIDATE_FRONTMOST] - a.$TST.attributes[Constants.kTAB_STATE_CANDIDATE_FRONTMOST])[0];
+      const oldFrontmost = tab.$TST.descendants.filter(tab => tab.$TST.isFrontmost)[0];
+      if (oldFrontmost && oldFrontmost != frontmostTab) {
+        oldFrontmost.$TST.removeState(Constants.kTAB_STATE_FRONTMOST, { broadcast: true });
+        oldFrontmost.$TST.clearFrontmost({ broadcast: true });
+      }
+      if (frontmostTab) {
+        if (params.collapsed)
+          frontmostTab.$TST.addState(Constants.kTAB_STATE_FRONTMOST, { broadcast: true });
+        const visibleAncestor = params.collapsed ? tab.$TST.nearestVisibleAncestorOrSelf : tab;
+        if (visibleAncestor && visibleAncestor.$TST)
+          frontmostTab.$TST.setAttribute(Constants.kFRONTMOST_LEVEL, visibleAncestor.$TST.getAttribute(Constants.kLEVEL), { broadcast: true });
+        for (const ancestor of frontmostTab.$TST.ancestors) {
+          if (!ancestor.$TST.hasFrontmostMember)
+            ancestor.$TST.addState(Constants.kTAB_STATE_HAS_FRONTMOST_MEMBER, { broadcast: true });
+        }
+      }
     }
     if (params.collapsed &&
         tab.active &&
@@ -712,7 +726,7 @@ export function collapseExpandTabAndSubtree(tab, params = {}) {
     }
     else if (!params.collapsed &&
              !tab.active &&
-             tab.$TST.isFrontmost) {
+             tab.$TST.isCandidateFrontmost) {
       tab.$TST.clearFrontmost({ broadcast: true });
     }
   }

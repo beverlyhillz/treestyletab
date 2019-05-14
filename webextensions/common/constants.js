@@ -132,6 +132,7 @@ export const kNEWTAB_ACTION_SELECTOR       = 'newtab-action-selector';
 
 export const kTAB_STATE_ACTIVE                    = 'active';
 export const kTAB_STATE_FRONTMOST                 = 'frontmost';
+export const kTAB_STATE_CANDIDATE_FRONTMOST       = 'candidate-frontmost';
 export const kTAB_STATE_PINNED                    = 'pinned';
 export const kTAB_STATE_LAST_ROW                  = 'last-row';
 export const kTAB_STATE_AUDIBLE                   = 'audible';
