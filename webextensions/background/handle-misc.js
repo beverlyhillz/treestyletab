@@ -371,10 +371,21 @@ function onMessage(message, sender) {
           logMouseEvent(' => ', { onRegularArea, wasMultiselectionAction });
           if (message.button == 0 &&
               onRegularArea &&
-              !wasMultiselectionAction)
+              !wasMultiselectionAction) {
+            const wasActive = tab.active;
             TabsInternalOperation.activateTab(tab, {
               keepMultiselection: tab.highlighted
             });
+            // Expand the tree with the second click on a frontmost tab
+            if (tab.$TST.collapsed &&
+                wasActive &&
+                configs.autoCollapseExpandSubtreeOnSelect) {
+              if (configs.autoExpandIntelligently)
+                Tree.collapseExpandTreesIntelligentlyFor(tab.$TST.nearestVisibleAncestorOrSelf);
+              else
+                Tree.collapseExpandSubtree(tab.$TST.nearestVisibleAncestorOrSelf, { collapsed: false });
+            }
+          }
         });
 
         return true;
