@@ -18,7 +18,7 @@ import EventListenerManager from '/extlib/EventListenerManager.js';
 function log(...args) {
   internalLogger('common/Window', ...args);
 }
-
+//window object has a map of tabs, 
 export default class Window {
   constructor(windowId) {
     const alreadyTracked = TabsStore.windows.get(windowId);
@@ -124,7 +124,7 @@ export default class Window {
         const tab = tabs.get(id);
         if (tab)
           yield tab;
-      }
+      }    const alreadyTracked = TabsStore.tabs.get(tab.id);
     }).call(this);
   }
 
@@ -155,10 +155,10 @@ export default class Window {
     }
 
     const order = this.order;
-    if (this.tabs.has(tab.id)) { // already tracked: update
-      const index = order.indexOf(tab.id);
-      order.splice(index, 1);
-      order.splice(tab.index, 0, tab.id);
+    if (this.tabs.has(tab.id)) { // already tracked: update//.has gives if the tab.id is in the map as a key
+      const index = order.indexOf(tab.id);//order is an array 
+      order.splice(index, 1);//remvoes the element at index from the array
+      order.splice(tab.index, 0, tab.id);//adds the tab.id in the array at position tab.index
       for (let i = Math.min(index, tab.index), maxi = Math.min(Math.max(index + 1, tab.index + 1), order.length); i < maxi; i++) {
         const tab = this.tabs.get(order[i]);
         if (!tab)
@@ -175,7 +175,7 @@ export default class Window {
     }
     else { // not tracked yet: add
       this.tabs.set(tab.id, tab);
-      order.splice(tab.index, 0, tab.id);
+      order.splice(tab.index, 0, tab.id);//inserts tab.id at tab,index position in the array
       for (let i = tab.index + 1, maxi = order.length; i < maxi; i++) {
         const tab = this.tabs.get(order[i]);
         if (!tab)
